@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+  <style>
+    :root {
+      --primary-color: rgba(255, 255, 255, 0.8);
+      --secondary-color: rgba(0, 0, 0, 0.8);
+      --tertiary-color: rgba(255, 255, 255, 0.6);
+    }
+
+    body {
+      background-image: url("https://wallpapers.com/images/hd/1920x1080-aesthetic-84fye9ax4dltxypj.jpg");
+      background-size: cover;
+      color: var(--primary-color);
+      font-family: "Roboto", sans-serif;
+      font-size: 16px;
+    }
+
+    h2 {
+      color: var(--primary-color);
+      font-size: 32px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      overflow: hidden;
+      background-color: var(--secondary-color);
+      margin: 20px;
+      border-radius: 8px;
+    }
+
+    .tab button {
+      background-color: var(--secondary-color);
+      border: none;
+      outline: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      transition: 0.3s;
+      border-radius: 8px;
+      color: var(--primary-color);
+    }
+
+    .tab button:hover {
+      background-color: var(--tertiary-color);
+      color: var(--secondary-color);
+    }
+
+    .tab button.active {
+      background-color: var(--tertiary-color);
+      color: var(--primary-color);
+    }
+
+    .tabcontent {
+      display: none;
+      padding: 20px;
+      border-radius: 8px;
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    input[type="text"],
+    input[type="number"],
+    input[type="submit"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      margin-bottom: 20px;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.5);
+      color: var(--secondary-color);
+      max-width: 500px;
+    }
+
+    input[type="submit"] {
+      background-color: var(--tertiary-color);
+      color: var(--primary-color);
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: var(--secondary-color);
+      color: var(--primary-color);
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+      margin-bottom: 20px;
+      background-color: var(--secondary-color);
+      opacity: 0.8;
+      color: var(--primary-color);
+    }
+
+    table th,
+    table td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--tertiary-color);
+    }
+
+    table th {
+      background-color: var(--tertiary-color);
+      font-weight: bold;
+      color: var(--secondary-color);
+    }
+
+    #average-money,
+    #average-age {
+      font-weight: bold;
+      color: var(--primary-color);
+    }
+  </style>
+  <head>
+    <title>Registrasi Pendaftar</title>
+    <link rel="stylesheet" type="text/css" href="" />
+  </head>
+  <body>
+    <div class="tab">
+      <button class="tablinks" onclick="openTab(event, 'Registrasi')">
+        Registrasi
+      </button>
+      <button class="tablinks" onclick="openTab(event, 'List')">
+        List Pendaftar
+      </button>
+    </div>
+
+    <div id="Registrasi" class="tabcontent">
+      <h2>Form Registrasi</h2>
+      <form id="registration-form" onsubmit="submitForm(event)">
+        <label for="name">Nama:</label><br />
+        <input
+          type="text"
+          id="name"
+          name="name"
+          minlength="10"
+          required
+        /><br />
+
+        <label for="age">Umur:</label><br />
+        <input type="number" id="age" name="age" min="25" required /><br />
+
+        <label for="money">Uang Sangu:</label><br />
+        <input
+          type="number"
+          id="money"
+          name="money"
+          min="100000"
+          max="1000000"
+          required
+        /><br />
+
+        <input type="submit" value="Submit" />
+      </form>
+    </div>
+
+    <div id="List" class="tabcontent">
+      <h2>List Pendaftar</h2>
+      <p>
+        Rata-rata pendaftar memiliki uang sangu sebesar
+        <span id="average-money"></span> dengan rata-rata umur
+        <span id="average-age"></span>
+      </p>
+      <table id="pendaftar-table">
+        <thead>
+          <tr>
+            <th>Nama</th>
+            <th>Umur</th>
+            <th>Uang Sangu</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <script>
+      // inisialisasi array pendaftar
+      let pendaftar = [];
+
+      // fungsi untuk membuka tab
+      function openTab(event, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tabcontent");
+        for (i = 0; i < tabcontent.length; i++) {
+          tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tablinks");
+        for (i = 0; i < tablinks.length; i++) {
+          tablinks[i].className = tablinks[i].className.replace(" active", "");
+        }
+        document.getElementById(tabName).style.display = "block";
+        event.currentTarget.className += " active";
+      }
+
+      // fungsi untuk submit form
+      function submitForm(event) {
+        event.preventDefault(); // menghindari form untuk melakukan reload halaman
+        let name = document.getElementById("name").value;
+        let age = document.getElementById("age").value;
+        let money = document.getElementById("money").value;
+        let newPendaftar = { name: name, age: age, money: money };
+        pendaftar.push(newPendaftar);
+        generateTable();
+        calculateAverage();
+        document.getElementById("registration-form").reset(); // reset form setelah submit
+      }
+
+      // fungsi untuk meng-generate table pendaftar
+      function generateTable() {
+        let table = document
+          .getElementById("pendaftar-table")
+          .getElementsByTagName("tbody")[0];
+        table.innerHTML = "";
+        for (let i = 0; i < pendaftar.length; i++) {
+          let row = table.insertRow(i);
+          let cell1 = row.insertCell(0);
+          let cell2 = row.insertCell(1);
+          let cell3 = row.insertCell(2);
+          cell1.innerHTML = pendaftar[i].name;
+          cell2.innerHTML = pendaftar[i].age;
+          cell3.innerHTML = pendaftar[i].money;
+        }
+      }
+
+      // fungsi untuk menghitung rata-rata umur dan uang sangu pendaftar
+      function calculateAverage() {
+        let totalAge = 0;
+        let totalMoney = 0;
+        for (let i = 0; i < pendaftar.length; i++) {
+          totalAge += parseInt(pendaftar[i].age);
+          totalMoney += parseInt(pendaftar[i].money);
+        }
+        let averageAge = totalAge / pendaftar.length;
+        let averageMoney = totalMoney / pendaftar.length;
+        document.getElementById("average-age").innerHTML =
+          averageAge.toFixed(2);
+        document.getElementById("average-money").innerHTML =
+          "Rp " + averageMoney.toLocaleString();
+      }
+    </script>
+  </body>
+</html>
